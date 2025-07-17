@@ -1,2 +1,2 @@
 # ExpenseSplitter
-Pet project for splitting group expenses
+Pet project for splitting group expenses (currently backend only)
