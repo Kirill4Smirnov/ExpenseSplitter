@@ -1,0 +1,29 @@
+version: "3.9"
+services:
+  db:
+    image: postgres:16
+    restart: always
+    environment:
+      POSTGRES_DB: expensesplitter
+      POSTGRES_USER: splitter_user
+      POSTGRES_PASSWORD: iiiiiii
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  user:
+    build:
+      context: ./user
+      dockerfile: Dockerfile
+    depends_on:
+      - db
+    environment:
+      DATABASE_URL: postgresql://splitter_user:iiiiiii@db:5432/expensesplitter
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./user:/app
+
+volumes:
+  pgdata:
