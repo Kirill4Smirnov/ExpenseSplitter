@@ -9,9 +9,9 @@ from sqlmodel import select
 app = FastAPI()
 
 
-@app.on_event("startup")
-def on_startup():
-    wait_for_db()
+#@app.on_event("startup")
+#def on_startup():
+#    wait_for_db()
 
 
 @app.post("/users/{username:str}/{email:str}")

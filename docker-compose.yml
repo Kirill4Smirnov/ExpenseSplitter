@@ -7,23 +7,58 @@ services:
       POSTGRES_DB: expensesplitter
       POSTGRES_USER: splitter_user
       POSTGRES_PASSWORD: iiiiiii
+      POSTGRES_HOST_AUTH_METHOD: trust
     ports:
       - "5432:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U splitter_user -d expensesplitter"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   user:
     build:
       context: ./user
       dockerfile: Dockerfile
     depends_on:
-      - db
+            db:
+                condition: service_healthy
     environment:
       DATABASE_URL: postgresql://splitter_user:iiiiiii@db:5432/expensesplitter
     ports:
       - "8000:8000"
     volumes:
       - ./user:/app
+
+  expense:
+    build:
+      context: ./expense
+      dockerfile: Dockerfile
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql://splitter_user:iiiiiii@db:5432/expensesplitter
+    ports:
+      - "8001:8000"
+    volumes:
+      - ./expense:/app
+
+  group:
+    build:
+      context: ./group
+      dockerfile: Dockerfile
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql://splitter_user:iiiiiii@db:5432/expensesplitter
+    ports:
+      - "8002:8000"
+    volumes:
+      - ./group:/app
 
 volumes:
   pgdata:
