@@ -2,9 +2,9 @@ from typing import Annotated
 
 from sqlmodel import SQLModel, create_engine, Session
 from fastapi import Depends
-import os
+from os import environ
 
-engine = create_engine(os.environ["DATABASE_URL"])
+engine = create_engine(environ["DATABASE_URL"])
 SQLModel.metadata.create_all(engine)
 
 def get_session():
